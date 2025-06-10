@@ -1,0 +1,54 @@
+---
+- name: Ensure NGINX Installed
+  apt:
+    name: nginx
+    state: latest
+    update_cache: true
+
+- name: Ensure NGINX is start
+  service:
+    name: nginx
+    state: started
+    enabled: true
+
+- name: Create Directory for vhost content
+  file:
+    path: "/var/www/{{ item }}"
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+  loop: "{{ sites }}"
+
+- name: Copy html content files
+  template:
+    src: index.html.j2
+    dest: "/var/www/{{ item }}/index.html"
+    owner: root
+    group: root
+    mode: '0644'
+  loop: "{{ sites }}"
+
+- name: Copy config vhost file
+  template:
+    src: vhost.conf.j2
+    dest: "/etc/nginx/sites-available/{{ item }}.conf"
+    owner: root
+    group: root
+    mode: '0644'
+  loop: "{{ sites }}"
+  register: config_job_output
+
+- name: Make links for congig files (sites_available -> sites_enabled)
+  file:
+    src: "/etc/nginx/sites-available/{{ item }}.conf"
+    dest: "/etc/nginx/sites-enabled/{{ item }}.conf"
+    state: link
+  loop: "{{ sites }}"
+  
+
+- name: Reload NGINX
+  service:
+    name: nginx
+    state: reloaded
+  when: config_job_output.changed == true

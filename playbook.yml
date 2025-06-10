@@ -1,0 +1,12 @@
+---
+- name: Install nginx with vhosts sites
+  hosts: webservers
+  become: true
+  vars:
+    sites:
+      - "fizfak.com"
+      - "mehmat.com"
+      - "biofak.com"
+
+  roles:
+   - { role: nginx-vhosts }
