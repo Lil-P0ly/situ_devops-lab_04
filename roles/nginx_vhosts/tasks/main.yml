@@ -1,18 +1,18 @@
 ---
 - name: Ensure NGINX Installed
-  apt:
+  ansible.builtin.apt:
     name: nginx
-    state: latest
+    state: present
     update_cache: true
 
 - name: Ensure NGINX is start
-  service:
+  ansible.builtin.service:
     name: nginx
     state: started
     enabled: true
 
 - name: Create Directory for vhost content
-  file:
+  ansible.builtin.file:
     path: "/var/www/{{ item }}"
     state: directory
     owner: root
@@ -21,7 +21,7 @@
   loop: "{{ sites }}"
 
 - name: Copy html content files
-  template:
+  ansible.builtin.template:
     src: index.html.j2
     dest: "/var/www/{{ item }}/index.html"
     owner: root
@@ -30,7 +30,7 @@
   loop: "{{ sites }}"
 
 - name: Copy config vhost file
-  template:
+  ansible.builtin.template:
     src: vhost.conf.j2
     dest: "/etc/nginx/sites-available/{{ item }}.conf"
     owner: root
@@ -40,7 +40,7 @@
   register: config_job_output
 
 - name: Make links for congig files (sites_available -> sites_enabled)
-  file:
+  ansible.builtin.file:
     src: "/etc/nginx/sites-available/{{ item }}.conf"
     dest: "/etc/nginx/sites-enabled/{{ item }}.conf"
     state: link
@@ -48,7 +48,7 @@
   
 
 - name: Reload NGINX
-  service:
+  ansible.builtin.service:
     name: nginx
     state: reloaded
   when: config_job_output.changed == true

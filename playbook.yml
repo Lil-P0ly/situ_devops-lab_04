@@ -9,4 +9,4 @@
       - "biofak.com"
 
   roles:
-   - { role: nginx-vhosts }
+    - { role: nginx_vhosts }
