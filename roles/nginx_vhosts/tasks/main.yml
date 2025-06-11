@@ -44,11 +44,10 @@
     src: "/etc/nginx/sites-available/{{ item }}.conf"
     dest: "/etc/nginx/sites-enabled/{{ item }}.conf"
     state: link
-  loop: "{{ sites }}"
-  
+  loop: "{{ sites }}"  
 
 - name: Reload NGINX
   ansible.builtin.service:
     name: nginx
     state: reloaded
-  when: config_job_output.changed == true
+  when: config_job_output.changed
