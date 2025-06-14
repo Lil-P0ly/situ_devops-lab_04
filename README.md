@@ -25,3 +25,4 @@ vagrant up
 ```bash
 ansible-playbook playbook.yml
 ```
+![Снимок экрана от 2025-06-14 19-13-13](https://github.com/user-attachments/assets/c207631f-3eb1-4433-a3ab-1aafc20e9258)
